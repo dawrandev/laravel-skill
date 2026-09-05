@@ -55,7 +55,9 @@ evals/                    scenarios for checking the skill still works
 /plugin install laravel-backend@dawrandev
 ```
 
-Nothing depends on where the repository lives, so a machine without `D:\laragon` works the same. The repository is private, so the machine needs git credentials for the `dawrandev` account first — a personal access token or Git Credential Manager, the same setup any private clone needs.
+Nothing depends on where the repository lives, so the path the repository sits at on any given machine does not matter.
+
+If the repository is later made private, the machine also needs git credentials for the `dawrandev` account — a personal access token or Git Credential Manager, the same setup any private clone needs.
 
 Pull later changes with:
 

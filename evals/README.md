@@ -36,7 +36,7 @@ Record results in `results.md` with a date and the model used.
 
 This is the most important scenario. The skill must not rewrite a codebase that has already decided.
 
-**Setup:** `D:\laragon\www\SamVet-library`, which routes every read through `app/Repositories/` and mandates that in its own `ARCHITECTURE.md`.
+**Setup:** an existing project that routes every read through `app/Repositories/` and mandates that in its own architecture document.
 
 **Prompt:** "Yangi modul qo'sh: tadbirlar (events) uchun CRUD."
 
