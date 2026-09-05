@@ -1,0 +1,24 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
+parameters:
+    paths:
+        - app
+        - database
+        - routes
+        - tests
+
+    # Start at 5 on a new project and raise it as types settle. 10 is the maximum
+    # and realistically needs barryvdh/laravel-ide-helper for Eloquent magic.
+    level: 5
+
+    # On an existing codebase, generate a baseline once so new code is held to the
+    # level while legacy findings stay recorded rather than blocking:
+    #   ./vendor/bin/phpstan analyse --generate-baseline
+    # baseline: phpstan-baseline.neon
+
+    checkModelProperties: true
+
+    excludePaths:
+        - app/Console/Kernel.php

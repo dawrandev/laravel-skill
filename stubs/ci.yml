@@ -1,0 +1,127 @@
+# Copy to .github/workflows/ci.yml
+#
+# Ordered cheapest first, so a style or static-analysis failure is reported in
+# seconds instead of after the full test run.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - run: composer validate --strict
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Code style
+        run: ./vendor/bin/pint --test
+
+      - name: Static analysis
+        run: ./vendor/bin/phpstan analyse --no-progress
+
+      - name: Security advisories
+        run: composer audit --locked
+
+  test:
+    runs-on: ubuntu-24.04
+    needs: quality
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testing
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.4']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - run: composer install --no-interaction --prefer-dist --no-progress
+
+      - run: cp .env.example .env && php artisan key:generate
+
+      - name: Tests
+        run: php artisan test --parallel --compact
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_DATABASE: testing
+          DB_USERNAME: root
+          DB_PASSWORD: root
+          BCRYPT_ROUNDS: 4
+
+      # Pest only. Remove on a PHPUnit project.
+      - name: Type coverage
+        run: ./vendor/bin/pest --type-coverage --min=100
+
+  api-docs:
+    runs-on: ubuntu-24.04
+    needs: quality
+    # Remove this job on a project with no JSON API.
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: cp .env.example .env && php artisan key:generate
+
+      - name: Regenerate the OpenAPI specification
+        run: php artisan scramble:export --path=docs/openapi.json
+
+      - name: Fail when the committed specification is stale
+        run: git diff --exit-code docs/openapi.json
+
+  assets:
+    runs-on: ubuntu-24.04
+    needs: quality
+    # Remove this job on an API-only project with no frontend build.
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npm run build

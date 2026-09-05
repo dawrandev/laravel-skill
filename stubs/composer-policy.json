@@ -1,0 +1,42 @@
+{
+    "_comment": "Merge these keys into the project's composer.json. The config.policy block requires Composer 2.10 or later; check with `composer --version`. On an older Composer, keep `composer audit` in CI and consider requiring roave/security-advisories, which fails resolution on a vulnerable version.",
+
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+
+    "config": {
+        "policy": {
+            "malware": {
+                "block": true,
+                "audit": "fail",
+                "block-scope": "all"
+            },
+            "advisories": {
+                "block": true,
+                "audit": "fail"
+            },
+            "abandoned": {
+                "block": false,
+                "audit": "fail"
+            }
+        },
+
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": false
+        },
+
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+
+    "scripts": {
+        "ci:style": "pint --test",
+        "ci:analyse": "phpstan analyse --no-progress",
+        "ci:security": [
+            "@composer validate --strict",
+            "@composer audit --locked"
+        ],
+        "ci:test": "pest --parallel"
+    }
+}
