@@ -51,7 +51,7 @@ evals/                    scenarios for checking the skill still works
 ### On any machine (recommended)
 
 ```
-/plugin marketplace add dawrandev/laravel-backend-skill
+/plugin marketplace add dawrandev/laravel-skill
 /plugin install laravel-backend@dawrandev
 ```
 
@@ -68,7 +68,7 @@ Pull later changes with:
 Works everywhere, including where the plugin commands are unavailable.
 
 ```powershell
-git clone https://github.com/dawrandev/laravel-backend-skill.git D:\path\to\repo
+git clone https://github.com/dawrandev/laravel-skill.git D:\path\to\repo
 New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills"
 cmd /c mklink /J "$env:USERPROFILE\.claude\skills\laravel-backend" "D:\path\to\repo\skills\laravel-backend"
 ```
