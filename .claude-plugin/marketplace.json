@@ -1,0 +1,21 @@
+{
+    "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+    "name": "dawrandev",
+    "description": "Personal Claude Code plugins.",
+    "owner": {
+        "name": "dawrandev",
+        "email": "diyarbekdev@gmail.com"
+    },
+    "plugins": [
+        {
+            "name": "laravel-backend",
+            "source": "./",
+            "description": "Architecture, conventions, and delivery workflow for Laravel backend work. Sits on top of laravel/boost and covers the decisions Boost leaves open.",
+            "category": "development",
+            "author": {
+                "name": "dawrandev"
+            },
+            "homepage": "https://github.com/dawrandev/laravel-backend-skill"
+        }
+    ]
+}

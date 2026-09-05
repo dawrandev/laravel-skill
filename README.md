@@ -25,33 +25,61 @@ Install both. The skill defers to Boost on framework-level questions and to the 
 
 ## Layout
 
+This repository is a Claude Code plugin and also its own single-plugin marketplace.
+
 ```
-SKILL.md                  entry point: grounding, precedence, hard rules, workflow, index
-references/
-  architecture.md         layers, actions vs services, query builders, repository policy
-  laravel-13.md           version gates, model attributes, removed patterns, footguns
-  house-style.md          naming, i18n, Blade and Alpine, comments, commits
-  new-project.md          day-zero setup checklist
-  api-design.md           envelope, Problem Details, versioning, pagination, OpenAPI
-  security.md             OWASP API Top 10 mapped to Laravel
-  testing.md              Pest discipline, endpoint coverage, isolation, arch tests
-  dependencies.md         package trust policy
-stubs/                    files to copy into a project
+.claude-plugin/
+  marketplace.json        makes this repo installable by URL
+  plugin.json             plugin metadata
+skills/laravel-backend/
+  SKILL.md                entry point: grounding, precedence, hard rules, workflow, index
+  references/
+    architecture.md       layers, actions vs services, query builders, repository policy
+    laravel-13.md         version gates, model attributes, removed patterns, footguns
+    house-style.md        naming, i18n, Blade and Alpine, comments, commits
+    new-project.md        day-zero setup checklist
+    api-design.md         envelope, Problem Details, versioning, pagination, OpenAPI
+    security.md           OWASP API Top 10 mapped to Laravel
+    testing.md            Pest discipline, endpoint coverage, isolation, arch tests
+    dependencies.md       package trust policy
+  stubs/                  files to copy into a project
 evals/                    scenarios for checking the skill still works
 ```
 
 ## Install
 
-Point Claude Code's skills directory at this repository. From an elevated prompt, or with Developer Mode on:
+### On any machine (recommended)
 
-```powershell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills"
-cmd /c mklink /J "$env:USERPROFILE\.claude\skills\laravel-backend" "D:\laragon\www\laravel-backend-skill"
+```
+/plugin marketplace add dawrandev/laravel-backend-skill
+/plugin install laravel-backend@dawrandev
 ```
 
-A junction rather than a copy means editing the repository updates the skill everywhere at once.
+Nothing depends on where the repository lives, so a machine without `D:\laragon` works the same. The repository is private, so the machine needs git credentials for the `dawrandev` account first — a personal access token or Git Credential Manager, the same setup any private clone needs.
 
-Per project instead of globally: copy or link the directory to `<project>/.claude/skills/laravel-backend`.
+Pull later changes with:
+
+```
+/plugin marketplace update dawrandev
+```
+
+### Fallback: link it by hand
+
+Works everywhere, including where the plugin commands are unavailable.
+
+```powershell
+git clone https://github.com/dawrandev/laravel-backend-skill.git D:\path\to\repo
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills"
+cmd /c mklink /J "$env:USERPROFILE\.claude\skills\laravel-backend" "D:\path\to\repo\skills\laravel-backend"
+```
+
+On macOS or Linux, `ln -s <repo>/skills/laravel-backend ~/.claude/skills/laravel-backend`.
+
+Per project rather than globally: link into `<project>/.claude/skills/laravel-backend`.
+
+### On the machine where you edit the skill
+
+Use the junction, not the plugin. Edits are then live with no reinstall step. Do not do both on one machine: two copies of the same skill name is ambiguous.
 
 ## Design constraints
 

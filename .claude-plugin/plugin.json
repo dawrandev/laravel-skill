@@ -1,0 +1,18 @@
+{
+    "name": "laravel-backend",
+    "description": "Architecture, conventions, and delivery workflow for Laravel backend work. Layer boundaries, project structure, API shape, Pest discipline, security checks, and a dependency-vetting policy. Built to sit on top of laravel/boost.",
+    "version": "1.0.0",
+    "author": {
+        "name": "dawrandev",
+        "email": "diyarbekdev@gmail.com"
+    },
+    "homepage": "https://github.com/dawrandev/laravel-backend-skill",
+    "keywords": [
+        "laravel",
+        "php",
+        "backend",
+        "architecture",
+        "pest",
+        "api"
+    ]
+}
