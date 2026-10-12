@@ -23,7 +23,7 @@ Conventions this developer's projects follow. Where a project's own `CLAUDE.md` 
 Plain Laravel with hand-written Blade. Admin panel builders are not used: they are slower to work in than writing the screen, and they take over patterns the rest of the application already has.
 
 - Blade + Tailwind CSS 4 + Alpine.js, bundled through Vite. Not a CDN.
-- No Filament, no Nova, no Livewire, no Inertia, no React or Vue. Interactivity is Alpine plus small JSON endpoints.
+- No Filament, no Nova, no Livewire, no Inertia, no React or Vue. Livewire round-trips the whole component state to the server on every interaction, which makes these sites noticeably slow. Interactivity is AJAX: Alpine plus `fetch()` against small JSON endpoints or Blade fragments. See [AJAX](#ajax).
 - Tailwind 4 is CSS-first: new colours and sizes go in the `@theme` block in `resources/css/app.css`. No `tailwind.config.js`.
 - MySQL.
 
@@ -122,6 +122,41 @@ resources/views/
 - Larger JavaScript goes to a module under `resources/js/`. No inline `<script>` blocks.
 - Load heavy libraries only on the pages that need them.
 - Tailwind 4 reads class names out of Blade files at build time. A new or edited `class="..."` does not exist in the compiled CSS until `npm run build` runs, so the page looks right locally with the dev server and breaks on the server.
+
+### AJAX
+
+Every interaction that should not reload the page (filtering, search, inline status change, modal forms, pagination, delete) is an AJAX request. Do not reach for Livewire, even for a single component.
+
+- Use the native `fetch()` API from Alpine or a module under `resources/js/`. No jQuery, no axios unless the project already has it.
+- Send `X-CSRF-TOKEN` from `<meta name="csrf-token">`, plus `Accept: application/json` and `X-Requested-With: XMLHttpRequest`, so validation errors come back as a 422 JSON response instead of a redirect.
+- The server side is an ordinary controller route that goes through the same form request, action, and policy as the non-AJAX path. AJAX changes the transport, not the layering.
+- Return JSON for data and status changes. Return a Blade fragment (`->fragmentIf(...)`, see [Blade fragments](#patterns-proven-in-these-projects)) when the response replaces a block of markup, so the markup stays in one template.
+- Show a loading state while the request runs, disable the submit button to prevent double submits, and render 422 errors next to their fields.
+- Put repeated request code (CSRF headers, error handling) in one helper in `resources/js/`, not copied into every page.
+
+```js
+// resources/js/http.js
+export async function send(url, { method = 'POST', body } = {}) {
+    const response = await fetch(url, {
+        method,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        },
+        body: body ? JSON.stringify(body) : undefined,
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+        throw { status: response.status, errors: data.errors ?? {}, message: data.message };
+    }
+
+    return data;
+}
+```
 
 ## Name the Guard in Background Code
 

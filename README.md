@@ -81,7 +81,7 @@ skills/laravel-backend/
 ├── references/
 │   ├── architecture.md     layers, actions vs services, query builders, repositories
 │   ├── laravel-13.md       version gates, model attributes, removed patterns, footguns
-│   ├── house-style.md      naming, i18n, Blade and Alpine, comments, commits
+│   ├── house-style.md      naming, i18n, Blade, Alpine + AJAX, commits
 │   ├── new-project.md      day-zero setup checklist
 │   ├── api-design.md       envelope, Problem Details, versioning, pagination, OpenAPI
 │   ├── security.md         OWASP API Top 10 mapped to Laravel

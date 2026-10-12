@@ -115,7 +115,7 @@ Read the file that matches what you are touching. Read only those files.
 |---|---|
 | Where logic belongs, layers, actions, services, repositories, query builders, project structure | `references/architecture.md` |
 | Version differences, model attributes, removed Laravel 10 patterns, framework footguns | `references/laravel-13.md` |
-| Naming, i18n, Blade and Alpine structure, comments, commits, proven local patterns | `references/house-style.md` |
+| Naming, i18n, Blade and Alpine structure, AJAX interactivity (no Livewire), comments, commits, proven local patterns | `references/house-style.md` |
 | A new project from an empty directory | `references/new-project.md` |
 | REST endpoints, response envelope, errors, versioning, pagination, filtering, OpenAPI | `references/api-design.md` |
 | Authorization, tenancy, uploads, SSRF, tokens, secrets | `references/security.md` |
